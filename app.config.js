@@ -11,12 +11,16 @@ export default {
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
     ios: {
+      bundleIdentifier: process.env.IOS_BUNDLE_ID,
+      buildNumber: "1",
       supportsTablet: true,
       entitlements: {
         "com.apple.developer.networking.wifi-info": true
       }
     },
     android: {
+      package: process.env.ANDROID_PACKAGE_NAME,
+      versionCode: 1,
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff"
