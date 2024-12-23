@@ -3,6 +3,9 @@ name: Build Development
 env:
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+  EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
+  IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
+  ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
 
 on:
   push:
