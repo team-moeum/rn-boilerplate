@@ -1,6 +1,7 @@
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { setCustomText } from "react-native-global-props";
 
 export const useSystemFont = () => {
   const [loaded, error] = useFonts({
@@ -11,6 +12,11 @@ export const useSystemFont = () => {
 
   useEffect(() => {
     if (loaded || error) {
+      setCustomText({
+        style: {
+          fontFamily: "Pretendard"
+        }
+      });
       SplashScreen.hideAsync();
     }
   }, [loaded, error]);
