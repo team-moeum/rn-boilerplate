@@ -1,0 +1,50 @@
+name: Build Preview
+
+env:
+  SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+    branches:
+      - "feat/**"
+  workflow_dispatch:
+
+jobs:
+  prepare:
+    uses: ./.github/workflows/actions/prepare.yml
+
+  build:
+    needs: [prepare]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          expo-version: latest
+          eas-version: latest
+          token: ${{ env.EXPO_TOKEN }}
+
+      - name: 🚀 Create Preview
+        id: preview
+        uses: expo/expo-github-action/preview@v8
+        with:
+          command: eas update --auto --branch ${{ github.event.pull_request.head.ref }}
+          comment: true
+
+      - name: 💬 Notify Slack
+        uses: ./.github/workflows/actions/notify-slack.yml
+        with:
+          title: "Native 앱 Preview 신규 버전 생성 알림"
+          message: |
+            🎉 Native 앱 Preview 신규 버전이 생성되었어요!
+            PR: ${{ github.event.pull_request.html_url }}
+            Branch: ${{ github.event.pull_request.head.ref }}
+            Preview QR: ${{ steps.preview.outputs.qr }}
+          webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
