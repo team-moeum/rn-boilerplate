@@ -63,27 +63,21 @@ jobs:
           command: eas update --auto --branch ${{ github.event.pull_request.head.ref || inputs.branch }} --platform all --message "App Update (#${{ github.event.pull_request.number || github.run_number }})"
           comment: true
 
-      - name: 💬 Notify Slack
+- name: 💬 Notify Slack
         if: success()
         uses: slackapi/slack-github-action@v1.26.0
         with:
           payload: |
             {
+              "text": "Native 앱 Preview 신규 버전 생성 알림",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🎉 Native 앱 Preview 신규 버전이 생성되었어요!"
+                    "text": "🎉 Native 앱 Preview 신규 버전이 생성되었어요!\n\n*PR:* ${{ github.event.pull_request.html_url }}\n*Branch:* ${{ github.event.pull_request.head.ref }}\n*Preview QR:* ${{ steps.preview.outputs.qr }}"
                   }
-                },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*PR:* ${{ github.event.pull_request.html_url }}\n*Branch:* ${{ github.event.pull_request.head.ref }}"
-                  }
-                },
+                }
               ]
             }
         env:
