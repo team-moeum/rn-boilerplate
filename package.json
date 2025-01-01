@@ -14,7 +14,8 @@
     "format": "prettier --write --cache .",
     "generate": "openapi-generator-cli generate -g typescript-axios -i ./docs/api-doc.json -o ./src.shared/apis -c ./openapi.json",
     "template": "openapi-generator-cli author template -g typescript-axios -o ./mustaches",
-    "generate:api": "openapi-generator-cli generate -g typescript-axios -i ./docs/api-doc.json -o  ./src/shared/apis -t ./mustaches -c ./openapi.json --skip-validate-spec"
+    "generate:api": "openapi-generator-cli generate -g typescript-axios -i ./docs/api-doc.json -o  ./src/shared/apis -t ./mustaches -c ./openapi.json --skip-validate-spec",
+    "prepare": "husky"
   },
   "dependencies": {
     "@babel/runtime": "^7.26.0",
