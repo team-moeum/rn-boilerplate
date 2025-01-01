@@ -3,6 +3,8 @@ name: Build Preview
 env:
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+  EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
+  ENV_FILE: ${{ secrets.ENV_FILE }}
 
 on:
   pull_request:
@@ -45,6 +47,12 @@ jobs:
 
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Create .env file
+        run: echo "${{ env.ENV_FILE }}" >> .env
+
+      - name: 🔧 Initialize EAS Project
+        run: yes | eas init --id ${{ env.EAS_PROJECT_ID }}
 
       - name: 🚀 Create Preview
         id: preview
