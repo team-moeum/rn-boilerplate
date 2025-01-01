@@ -13,6 +13,13 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - name: Check for EXPO_TOKEN
+        run: |
+          if [ -z "${{ env.EXPO_TOKEN }}" ]; then
+            echo "You must provide an EXPO_TOKEN secret linked to this project's Expo account in this repo's secrets. Learn more: https://docs.expo.dev/eas-update/github-actions"
+            exit 1
+          fi
+
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
@@ -30,15 +37,14 @@ jobs:
           node-version: 20.x
           cache: "pnpm"
 
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
         with:
-          expo-version: latest
           eas-version: latest
           token: ${{ env.EXPO_TOKEN }}
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
 
       - name: 🚀 Create Preview
         id: preview
