@@ -63,7 +63,7 @@ jobs:
           command: eas update --auto --branch ${{ github.event.pull_request.head.ref || inputs.branch }} --platform all --message "App Update (#${{ github.event.pull_request.number || github.run_number }})"
           comment: true
 
-- name: 💬 Notify Slack
+      - name: 💬 Notify Slack
         if: success()
         uses: slackapi/slack-github-action@v1.26.0
         with:
