@@ -38,6 +38,9 @@ importers:
       axios:
         specifier: ^1.7.8
         version: 1.7.8
+      dotenv:
+        specifier: ^16.4.7
+        version: 16.4.7
       expo:
         specifier: ~52.0.11
         version: 52.0.11(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@expo/metro-runtime@4.0.0(react-native@0.76.3(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1)))(react-native-webview@13.12.2(react-native@0.76.3(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1))(react-native@0.76.3(@babel/core@7.26.0)(@babel/preset-env@7.26.0(@babel/core@7.26.0))(@types/react@18.3.12)(react@18.3.1))(react@18.3.1)
@@ -123,9 +126,6 @@ importers:
       '@types/react-test-renderer':
         specifier: ^18.3.0
         version: 18.3.0
-      dotenv:
-        specifier: ^16.4.7
-        version: 16.4.7
       eslint:
         specifier: ^8.57.0
         version: 8.57.1
