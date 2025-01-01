@@ -64,27 +64,37 @@ jobs:
           comment: true
 
       - name: 💬 Notify Slack
+        if: success()
         uses: slackapi/slack-github-action@v1.26.0
         with:
           payload: |
             {
-              "text": "Native 앱 Preview 신규 버전 생성 알림",
               "blocks": [
                 {
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🎉 Native 앱 Preview 신규 버전이 생성되었어요!\nPR: ${{ github.event.pull_request.html_url }}\nBranch: ${{ github.event.pull_request.head.ref }}\nPreview URL: ${{ steps.preview.outputs.url }}"
+                    "text": "🎉 Native 앱 Preview 신규 버전이 생성되었어요!"
                   }
                 },
                 {
-                  "type": "image",
-                  "title": {
-                    "type": "plain_text",
-                    "text": "QR Code"
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "**PR:** ${{ github.event.pull_request.html_url }}\n**Branch:** ${{ github.event.pull_request.head.ref }}\n**Preview URL:** ${{ steps.preview.outputs.url }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Preview QR Code:*"
                   },
-                  "image_url": "${{ steps.preview.outputs.qr }}",
-                  "alt_text": "QR Code for Preview"
+                  "accessory": {
+                    "type": "image",
+                    "image_url": "${{ steps.preview.outputs.qr }}",
+                    "alt_text": "QR Code"
+                  }
                 }
               ]
             }
