@@ -10,6 +10,12 @@ export default {
     scheme: "myapp",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
+    runtimeVersion: {
+      policy: "sdkVersion"
+    },
+    updates: {
+      url: `https://u.expo.dev/${process.env.EAS_PROJECT_ID}`
+    },
     ios: {
       bundleIdentifier: process.env.IOS_BUNDLE_ID,
       buildNumber: "1",
@@ -25,11 +31,6 @@ export default {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff"
       }
-    },
-    web: {
-      bundler: "metro",
-      output: "static",
-      favicon: "./assets/images/favicon.png"
     },
     plugins: [
       "expo-router",
