@@ -75,7 +75,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🎉 Native 앱 Preview 신규 버전이 생성되었어요!\n\n*PR:* ${{ github.event.pull_request.html_url }}\n*Branch:* ${{ github.event.pull_request.head.ref }}\n*Preview QR:* ${{ steps.preview.outputs.qr }}"
+                    "text": "🎉 Native 앱 Preview 신규 버전이 생성되었어요!\n\n*PR:* ${{ github.event.pull_request.html_url }}\n*Branch:* ${{ github.event.pull_request.head.ref }}"
                   }
                 }
               ]
