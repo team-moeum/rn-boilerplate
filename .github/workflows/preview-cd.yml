@@ -81,21 +81,9 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "**PR:** ${{ github.event.pull_request.html_url }}\n**Branch:** ${{ github.event.pull_request.head.ref }}\n**Preview URL:** ${{ steps.preview.outputs.projectQR }}"
+                    "text": "*PR:* ${{ github.event.pull_request.html_url }}\n*Branch:* ${{ github.event.pull_request.head.ref }}"
                   }
                 },
-                {
-                  "type": "section",
-                  "text": {
-                    "type": "mrkdwn",
-                    "text": "*Preview QR Code:*"
-                  },
-                  "accessory": {
-                    "type": "image",
-                    "image_url": "${{ steps.preview.outputs.projectQR }}",
-                    "alt_text": "QR Code"
-                  }
-                }
               ]
             }
         env:
