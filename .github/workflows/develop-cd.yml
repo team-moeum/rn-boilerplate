@@ -14,14 +14,14 @@ on:
 
 jobs:
   check-labels:
-    uses: ./label-checker.yml
+    uses: ./.github/workflows/label-checker.yml
     with:
       labels: ["build-native"]
 
   prepare:
     needs: [check-labels]
     if: needs.check-labels.outputs.has_required_labels == 'true'
-    uses: ./prepare.yml
+    uses: ./.github/workflows/prepare.yml
 
   build:
     needs: [prepare]
@@ -52,7 +52,7 @@ jobs:
           echo "ios_qr=${IOS_QR}" >> $GITHUB_OUTPUT
 
       - name: 💬 Notify Slack
-        uses: ./notify-slack.yml
+        uses: ./.github/workflows/notify-slack.yml
         with:
           title: 신규 버전 생성 알림
           message: |
