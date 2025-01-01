@@ -20,14 +20,14 @@ on:
 
 jobs:
   check-labels:
-    uses: ./.github/workflows/actions/label-checker.yml
+    uses: ./label-checker.yml
     with:
       labels: ["build-native"]
 
   prepare:
     needs: [check-labels]
     if: needs.check-labels.outputs.has_required_labels == 'true'
-    uses: ./.github/workflows/actions/prepare.yml
+    uses: ./prepare.yml
 
   build:
     needs: [prepare]
@@ -73,7 +73,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Notify Slack
-        uses: ./.github/workflows/actions/notify-slack.yml
+        uses: ./notify-slack.yml
         with:
           title: 신규 버전 생성 알림
           message: |

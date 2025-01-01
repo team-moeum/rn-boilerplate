@@ -11,7 +11,7 @@ on:
 
 jobs:
   prepare:
-    uses: ./.github/workflows/actions/prepare.yml
+    uses: ./prepare.yml
 
   build:
     needs: [prepare]
@@ -37,7 +37,7 @@ jobs:
           comment: true
 
       - name: 💬 Notify Slack
-        uses: ./.github/workflows/actions/notify-slack.yml
+        uses: ./notify-slack.yml
         with:
           title: "Native 앱 Preview 신규 버전 생성 알림"
           message: |
