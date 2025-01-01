@@ -64,13 +64,30 @@ jobs:
           comment: true
 
       - name: 💬 Notify Slack
-        uses: ./.github/workflows/notify-slack.yml
+        uses: slackapi/slack-github-action@v1.26.0
         with:
-          title: "Native 앱 Preview 신규 버전 생성 알림"
-          message: |
-            🎉 Native 앱 Preview 신규 버전이 생성되었어요!
-            PR: ${{ github.event.pull_request.html_url }}
-            Branch: ${{ github.event.pull_request.head.ref }}
-            Preview URL: ${{ steps.preview.outputs.url }}
-            Preview QR: ${{ steps.preview.outputs.qr }}
-          webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "Native 앱 Preview 신규 버전 생성 알림",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🎉 Native 앱 Preview 신규 버전이 생성되었어요!\nPR: ${{ github.event.pull_request.html_url }}\nBranch: ${{ github.event.pull_request.head.ref }}\nPreview URL: ${{ steps.preview.outputs.url }}"
+                  }
+                },
+                {
+                  "type": "image",
+                  "title": {
+                    "type": "plain_text",
+                    "text": "QR Code"
+                  },
+                  "image_url": "${{ steps.preview.outputs.qr }}",
+                  "alt_text": "QR Code for Preview"
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
