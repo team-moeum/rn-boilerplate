@@ -72,15 +72,15 @@ jobs:
 
       - name: 🚀 Create Development Build - iOS
         id: ios-build
+        uses: expo/expo-github-action/preview@v8
+        with:
+          command: eas build --profile preview --platform ios --clear-cache --non-interactive
+          comment: false
+
+      - name: Get Build URL
+        id: ios-build-url
         run: |
-          echo "Starting iOS build with preview profile..."
-          BUILD_OUTPUT=$(eas build \
-            --profile preview \
-            --platform ios \
-            --clear-cache \
-            --non-interactive)
-          echo "$BUILD_OUTPUT"
-          BUILD_URL=$(echo "$BUILD_OUTPUT" | grep -o 'https://[^ ]*\.tar\.gz')
+          BUILD_URL=$(eas build:list --status finished --platform ios --limit 1 --non-interactive | grep -o 'https://expo.dev/accounts/.*/builds/.*' | head -n 1)
           echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
 
       - name: 💬 Notify Slack
@@ -95,7 +95,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🎉 🎉 Native 앱 Development 빌드가 완료되었어요!\n\n*PR:* ${{ github.event.pull_request.html_url }}\n*Branch:* ${{ github.event.pull_request.head.ref }}\nDownload:* ${{ steps.ios-build.outputs.build_url }}"
+                    "text": "🎉 🎉 Native 앱 Development 빌드가 완료되었어요!\n\nPR: ${{ github.event.pull_request.html_url }}\nBranch: ${{ github.event.pull_request.head.ref }}\nDownload: ${{ steps.ios-build-url.outputs.build_url }}"
                   }
                 }
               ]
