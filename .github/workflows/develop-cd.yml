@@ -13,7 +13,7 @@ jobs:
   check-label:
     uses: ./.github/workflows/label-checker.yml
     with:
-      labels: "build-native"
+      label: "build-native"
 
   build:
     needs: [check-label]
