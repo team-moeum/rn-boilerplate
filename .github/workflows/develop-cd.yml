@@ -4,13 +4,10 @@ env:
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
   EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
-  IOS_BUNDLE_ID: ${{ secrets.IOS_BUNDLE_ID }}
-  ANDROID_PACKAGE_NAME: ${{ secrets.ANDROID_PACKAGE_NAME }}
+  ENV_FILE: ${{ secrets.ENV_FILE }}
 
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 jobs:
   check-labels:
@@ -18,46 +15,75 @@ jobs:
     with:
       labels: ["build-native"]
 
-  prepare:
+  build:
     needs: [check-labels]
     if: needs.check-labels.outputs.has_required_labels == 'true'
-    uses: ./.github/workflows/prepare.yml
-
-  build:
-    needs: [prepare]
     runs-on: ubuntu-latest
     steps:
+      - name: Check for EXPO_TOKEN
+        run: |
+          if [ -z "${{ env.EXPO_TOKEN }}" ]; then
+            echo "You must provide an EXPO_TOKEN secret linked to this project's Expo account in this repo's secrets. Learn more: https://docs.expo.dev/eas-update/github-actions"
+            exit 1
+          fi
+
       - name: Checkout Repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Setup PNPM
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+          cache: "pnpm"
+
       - name: 🏗 Setup EAS
         uses: expo/expo-github-action@v8
         with:
-          expo-version: latest
           eas-version: latest
           token: ${{ env.EXPO_TOKEN }}
 
-      - name: 🚀 Create Development Build
-        id: build
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Create .env file
+        run: echo "${{ env.ENV_FILE }}" >> .env
+
+      - name: 🔧 Initialize EAS Project
+        run: yes | eas init --id ${{ env.EAS_PROJECT_ID }}
+
+      - name: 🚀 Create Development Build - iOS
+        id: ios-build
         run: |
-          BUILD_RESULT=$(eas build --platform all --profile preview --non-interactive --json)
-          echo "$BUILD_RESULT" > build_output.json
-
-          ANDROID_QR=$(jq -r '.[] | select(.platform=="ANDROID").qr' build_output.json)
-          IOS_QR=$(jq -r '.[] | select(.platform=="IOS").qr' build_output.json)
-
-          echo "android_qr=${ANDROID_QR}" >> $GITHUB_OUTPUT
-          echo "ios_qr=${IOS_QR}" >> $GITHUB_OUTPUT
+          BUILD_OUTPUT=$(eas build --profile preview --platform ios --clear-cache --non-interactive)
+          echo "$BUILD_OUTPUT"
+          BUILD_URL=$(echo "$BUILD_OUTPUT" | grep -o 'https://[^ ]*\.tar\.gz')
+          echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
 
       - name: 💬 Notify Slack
-        uses: ./.github/workflows/notify-slack.yml
+        if: success()
+        uses: slackapi/slack-github-action@v1.26.0
         with:
-          title: 신규 버전 생성 알림
-          message: |
-            🎉 Native 앱 Development 빌드가 완료되었어요!
-            PR: ${{ github.event.pull_request.html_url }}
-            Android QR: ${{ steps.build.outputs.android_qr }}
-            iOS QR: ${{ steps.build.outputs.ios_qr }}
-          webhook_url: ${{ env.SLACK_WEBHOOK_URL }}
+          payload: |
+            {
+              "text": "Native 앱 Preview 신규 버전 생성 알림",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "🎉 🎉 Native 앱 Development 빌드가 완료되었어요!\n\n*PR:* ${{ github.event.pull_request.html_url }}\n*Branch:* ${{ github.event.pull_request.head.ref }}\nDownload:* ${{ steps.ios-build.outputs.build_url }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
