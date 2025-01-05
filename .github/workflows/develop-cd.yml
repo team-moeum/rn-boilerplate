@@ -8,16 +8,25 @@ env:
 
 on:
   workflow_dispatch:
+    inputs:
+      skip_label:
+        description: "라벨 체크 무시"
+        type: boolean
+        required: true
+        default: false
 
 jobs:
   check-label:
+    if: inputs.skip_label != true
     uses: ./.github/workflows/label-checker.yml
     with:
       label: "build-native"
 
   build:
     needs: [check-label]
-    if: needs.check-label.outputs.has_required_label == 'true'
+    if: |
+      inputs.skip_label == true || 
+      (needs.check-label.result == 'success' && needs.check-label.outputs.has_required_label == 'true')
     runs-on: ubuntu-latest
     steps:
       - name: Check for EXPO_TOKEN
