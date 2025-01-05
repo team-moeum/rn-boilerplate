@@ -3,7 +3,7 @@ name: Build Development
 env:
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
   EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-  EAS_PROJECT_ID: ${{ secrets.EAS_PROJECT_ID }}
+  EAS_PROJECT_ID: f345cdac-62b0-41d8-b7a4-5450aca69da5
   ENV_FILE: ${{ secrets.ENV_FILE }}
 
 on:
@@ -73,7 +73,12 @@ jobs:
       - name: 🚀 Create Development Build - iOS
         id: ios-build
         run: |
-          BUILD_OUTPUT=$(eas build --profile preview --platform ios --clear-cache --non-interactive)
+          echo "Starting iOS build with preview profile..."
+          BUILD_OUTPUT=$(eas build \
+            --profile preview \
+            --platform ios \
+            --clear-cache \
+            --non-interactive)
           echo "$BUILD_OUTPUT"
           BUILD_URL=$(echo "$BUILD_OUTPUT" | grep -o 'https://[^ ]*\.tar\.gz')
           echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
