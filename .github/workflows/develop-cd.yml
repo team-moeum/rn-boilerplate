@@ -74,7 +74,7 @@ jobs:
         id: ios-build
         uses: expo/expo-github-action/preview@v8
         with:
-          command: command: |
+          command: |
             eas build --profile preview --platform ios --clear-cache --non-interactive --no-wait 2>&1 | 
             sed -E 's/(Serial Number) .*/\1 ********/g' | 
             sed -E 's/(Apple Team) [A-Z0-9]+ \((.*)\)/\1 ******** (\2)/g' | 
