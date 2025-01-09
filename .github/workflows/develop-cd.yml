@@ -74,7 +74,14 @@ jobs:
         id: ios-build
         uses: expo/expo-github-action/preview@v8
         with:
-          command: eas build --profile preview --platform ios --clear-cache --non-interactive --no-wait
+          command: command: |
+            eas build --profile preview --platform ios --clear-cache --non-interactive --no-wait 2>&1 | 
+            sed -E 's/(Serial Number) .*/\1 ********/g' | 
+            sed -E 's/(Apple Team) [A-Z0-9]+ \((.*)\)/\1 ******** (\2)/g' | 
+            sed -E 's/(Developer Portal ID) .*/\1 ********/g' | 
+            sed -E 's/(UDID: )[0-9A-Z-]+/\1********/g' | 
+            sed -E 's/(Bundle Identifier) .*/\1 ********/g' | 
+            sed -E 's/@[^/]+\//@****\//g'
           comment: false
 
       - name: Get Build URL
