@@ -74,7 +74,7 @@ jobs:
         id: ios-build
         uses: expo/expo-github-action/preview@v8
         with:
-          command: eas build --profile preview --platform ios --clear-cache --non-interactive
+          command: eas build --profile preview --platform ios --clear-cache --non-interactive --no-wait
           comment: false
 
       - name: Get Build URL
