@@ -73,7 +73,7 @@ jobs:
         if: ${{ github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'both' }}
         id: ios-build-url
         run: |
-          BUILD_URL=$(eas build:list --status finished --platform ios --limit 1 --non-interactive | grep -o 'https://expo.dev/accounts/.*/builds/.*' | head -n 1)
+          BUILD_URL=$(eas build:list --platform ios --limit 1 --non-interactive | grep -o 'https://expo.dev/accounts/.*/builds/.*' | head -n 1)
           echo "ios_url=$BUILD_URL" >> $GITHUB_OUTPUT
 
       - name: 🚀 Create Development Build - Android
@@ -88,7 +88,7 @@ jobs:
         if: ${{ github.event.inputs.platform == 'android' || github.event.inputs.platform == 'both' }}
         id: android-build-url
         run: |
-          BUILD_URL=$(eas build:list --status finished --platform android --limit 1 --non-interactive | grep -o 'https://expo.dev/accounts/.*/builds/.*' | head -n 1)
+          BUILD_URL=$(eas build:list --platform android --limit 1 --non-interactive | grep -o 'https://expo.dev/accounts/.*/builds/.*' | head -n 1)
           echo "android_url=$BUILD_URL" >> $GITHUB_OUTPUT
 
       - name: 💬 Notify Slack
@@ -103,7 +103,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🎉 🎉 Native 앱 Development 빌드가 완료되었어요!\n\nBranch: ${{ github.ref_name }}\n${{ (github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'both') && format('iOS Download: {0}\n', steps.ios-build-url.outputs.ios_url) }}${{ (github.event.inputs.platform == 'android' || github.event.inputs.platform == 'both') && format('Android Download: {0}', steps.android-build-url.outputs.android_url) }}"
+                    "text": "🎉 🎉 Native 앱 Development 빌드가 완료되었어요!\n\nBranch: ${{ github.ref_name }}${{ (github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'both') && '\niOS Download: ' }}${{ (github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'both') && steps.ios-build-url.outputs.ios_url || '' }}${{ (github.event.inputs.platform == 'android' || github.event.inputs.platform == 'both') && '\nAndroid Download: ' }}${{ (github.event.inputs.platform == 'android' || github.event.inputs.platform == 'both') && steps.android-build-url.outputs.android_url || '' }}"
                   }
                 }
               ]
