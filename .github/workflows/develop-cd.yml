@@ -66,11 +66,7 @@ jobs:
         id: ios-build
         uses: expo/expo-github-action/preview@v8
         with:
-          command: |
-            eas build --profile preview --platform ios --clear-cache --non-interactive --no-wait 2>&1 |
-            grep -v "warning:" |
-            grep -v "note:" |
-            grep -v "Waiting"
+          command: eas build --profile preview --platform ios --clear-cache --non-interactive --no-wait
           comment: false
 
       - name: Get iOS Build URL
@@ -85,11 +81,7 @@ jobs:
         id: android-build
         uses: expo/expo-github-action/preview@v8
         with:
-          command: |
-            eas build --profile preview --platform android --clear-cache --non-interactive --no-wait 2>&1 |
-            grep -v "warning:" |
-            grep -v "note:" |
-            grep -v "Waiting"
+          command: eas build --profile preview --platform android --clear-cache --non-interactive --no-wait
           comment: false
 
       - name: Get Android Build URL
