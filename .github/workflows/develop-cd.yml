@@ -9,26 +9,17 @@ env:
 on:
   workflow_dispatch:
     inputs:
-      skip_label:
-        description: "라벨 체크 무시"
-        type: boolean
+      platform:
+        type: choice
+        description: "Build Platform"
         required: true
-        default: false
+        options:
+          - ios
+          - android
+          - both
 
 jobs:
-  check-label:
-    if: inputs.skip_label != true
-    uses: ./.github/workflows/label-checker.yml
-    with:
-      label: "build-native"
-
   build:
-    needs: [check-label]
-    if: |
-      always() && (
-        inputs.skip_label == true || 
-        (needs.check-label.result == 'success' && needs.check-label.outputs.has_required_label == 'true')
-      )
     runs-on: ubuntu-latest
     steps:
       - name: Check for EXPO_TOKEN
@@ -71,24 +62,42 @@ jobs:
         run: yes | eas init --id ${{ env.EAS_PROJECT_ID }}
 
       - name: 🚀 Create Development Build - iOS
+        if: ${{ github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'both' }}
         id: ios-build
         uses: expo/expo-github-action/preview@v8
         with:
           command: |
-            eas build --profile preview --platform ios --clear-cache --non-interactive --no-wait 2>&1 | 
-            sed -E 's/(Serial Number) .*/\1 ********/g' | 
-            sed -E 's/(Apple Team) [A-Z0-9]+ \((.*)\)/\1 ******** (\2)/g' | 
-            sed -E 's/(Developer Portal ID) .*/\1 ********/g' | 
-            sed -E 's/(UDID: )[0-9A-Z-]+/\1********/g' | 
-            sed -E 's/(Bundle Identifier) .*/\1 ********/g' | 
-            sed -E 's/@[^/]+\//@****\//g'
+            eas build --profile preview --platform ios --clear-cache --non-interactive --no-wait 2>&1 |
+            grep -v "warning:" |
+            grep -v "note:" |
+            grep -v "Waiting"
           comment: false
 
-      - name: Get Build URL
+      - name: Get iOS Build URL
+        if: ${{ github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'both' }}
         id: ios-build-url
         run: |
           BUILD_URL=$(eas build:list --status finished --platform ios --limit 1 --non-interactive | grep -o 'https://expo.dev/accounts/.*/builds/.*' | head -n 1)
-          echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
+          echo "ios_url=$BUILD_URL" >> $GITHUB_OUTPUT
+
+      - name: 🚀 Create Development Build - Android
+        if: ${{ github.event.inputs.platform == 'android' || github.event.inputs.platform == 'both' }}
+        id: android-build
+        uses: expo/expo-github-action/preview@v8
+        with:
+          command: |
+            eas build --profile preview --platform android --clear-cache --non-interactive --no-wait 2>&1 |
+            grep -v "warning:" |
+            grep -v "note:" |
+            grep -v "Waiting"
+          comment: false
+
+      - name: Get Android Build URL
+        if: ${{ github.event.inputs.platform == 'android' || github.event.inputs.platform == 'both' }}
+        id: android-build-url
+        run: |
+          BUILD_URL=$(eas build:list --status finished --platform android --limit 1 --non-interactive | grep -o 'https://expo.dev/accounts/.*/builds/.*' | head -n 1)
+          echo "android_url=$BUILD_URL" >> $GITHUB_OUTPUT
 
       - name: 💬 Notify Slack
         if: success()
@@ -102,7 +111,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🎉 🎉 Native 앱 Development 빌드가 완료되었어요!\n\nPR: ${{ github.event.pull_request.html_url }}\nBranch: ${{ github.event.pull_request.head.ref }}\nDownload: ${{ steps.ios-build-url.outputs.build_url }}"
+                    "text": "🎉 🎉 Native 앱 Development 빌드가 완료되었어요!\n\nBranch: ${{ github.ref_name }}\n${{ github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'both' && format('iOS Download: {0}\n', steps.ios-build-url.outputs.ios_url) }}${{ github.event.inputs.platform == 'android' || github.event.inputs.platform == 'both' && format('Android Download: {0}', steps.android-build-url.outputs.android_url) }}"
                   }
                 }
               ]
