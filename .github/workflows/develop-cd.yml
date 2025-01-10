@@ -103,7 +103,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "🎉 🎉 Native 앱 Development 빌드가 완료되었어요!\n\nBranch: ${{ github.ref_name }}\n${{ github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'both' && format('iOS Download: {0}\n', steps.ios-build-url.outputs.ios_url) }}${{ github.event.inputs.platform == 'android' || github.event.inputs.platform == 'both' && format('Android Download: {0}', steps.android-build-url.outputs.android_url) }}"
+                    "text": "🎉 🎉 Native 앱 Development 빌드가 완료되었어요!\n\nBranch: ${{ github.ref_name }}\n${{ (github.event.inputs.platform == 'ios' || github.event.inputs.platform == 'both') && format('iOS Download: {0}\n', steps.ios-build-url.outputs.ios_url) }}${{ (github.event.inputs.platform == 'android' || github.event.inputs.platform == 'both') && format('Android Download: {0}', steps.android-build-url.outputs.android_url) }}"
                   }
                 }
               ]
