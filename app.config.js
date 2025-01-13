@@ -30,10 +30,11 @@ export default {
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff"
-      },
-      sourceDir: "./android"
+      }
     },
     plugins: [
+      "expo-asset",
+      "expo-font",
       "expo-router",
       [
         "expo-splash-screen",
@@ -42,6 +43,24 @@ export default {
           imageWidth: 200,
           resizeMode: "contain",
           backgroundColor: "#ffffff"
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          android: {
+            buildToolsVersion: "34.0.0",
+            compileSdkVersion: 34,
+            targetSdkVersion: 34,
+            minSdkVersion: 23,
+            kotlinVersion: "1.8.10",
+            extraMavenRepos: [],
+            enableProguardInReleaseBuilds: false,
+            enableShrinkResourcesInReleaseBuilds: false
+          },
+          ios: {
+            deploymentTarget: "15.1"
+          }
         }
       ]
     ],
