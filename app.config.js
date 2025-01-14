@@ -49,11 +49,11 @@ export default {
         "expo-build-properties",
         {
           android: {
-            buildToolsVersion: "34.0.0",
-            compileSdkVersion: 34,
-            targetSdkVersion: 34,
-            minSdkVersion: 23,
-            kotlinVersion: "1.8.10",
+            buildToolsVersion: "35.0.0",
+            compileSdkVersion: 35,
+            targetSdkVersion: 35,
+            minSdkVersion: 24,
+            kotlinVersion: "1.9.24",
             extraMavenRepos: [],
             enableProguardInReleaseBuilds: false,
             enableShrinkResourcesInReleaseBuilds: false
