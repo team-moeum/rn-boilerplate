@@ -30,7 +30,8 @@ export default {
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff"
-      }
+      },
+      
     },
     plugins: [
       "expo-asset",
@@ -48,21 +49,10 @@ export default {
       [
         "expo-build-properties",
         {
-          android: {
-            buildToolsVersion: "35.0.0",
-            compileSdkVersion: 35,
-            targetSdkVersion: 35,
-            minSdkVersion: 24,
-            kotlinVersion: "1.9.24",
-            extraMavenRepos: [],
-            enableProguardInReleaseBuilds: false,
-            enableShrinkResourcesInReleaseBuilds: false
-          },
-          ios: {
-            deploymentTarget: "15.1"
-          }
+          android: {},
+          ios: {}
         }
-      ]
+      ],
     ],
     experiments: {
       typedRoutes: true
