@@ -30,8 +30,7 @@ export default {
       adaptiveIcon: {
         foregroundImage: "./assets/images/adaptive-icon.png",
         backgroundColor: "#ffffff"
-      },
-      
+      }
     },
     plugins: [
       "expo-asset",
@@ -46,13 +45,7 @@ export default {
           backgroundColor: "#ffffff"
         }
       ],
-      [
-        "expo-build-properties",
-        {
-          android: {},
-          ios: {}
-        }
-      ],
+      "expo-build-properties"
     ],
     experiments: {
       typedRoutes: true
